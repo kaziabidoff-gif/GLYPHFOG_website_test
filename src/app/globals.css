@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+/*
+ * GLYPHFOG design tokens.
+ * Source of truth: docs/DESIGN_SYSTEM.md. Change colors here, never in components.
+ */
+:root {
+  /* Surfaces */
+  --canvas: #f6f4ef; /* warm off-white page background */
+  --surface: #fbfaf7; /* raised / lighter areas */
+  --surface-sunken: #eeebe4; /* quiet tonal band */
+
+  /* Text */
+  --ink: #1c1d1f; /* primary text, deep charcoal */
+  --ink-muted: #595c60; /* secondary text (AA on canvas) */
+
+  /* Lines */
+  --line: #ddd9d0; /* hairline borders */
+  --line-strong: #c3beb2; /* hover / emphasis borders */
+
+  /* Accent: a single restrained verdigris */
+  --accent: #2f5d54;
+  --accent-soft: #e2eae6;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-sunken: var(--surface-sunken);
+  --color-ink: var(--ink);
+  --color-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--canvas);
+}
+
+/* Visible focus for every interactive element */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Layout ---------- */
+@utility container-page {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+}
+
+@utility section-space {
+  padding-block: clamp(4.5rem, 9vw, 8.5rem);
+}
+
+/* ---------- Type scale ---------- */
+@utility text-display {
+  font-size: clamp(2.6rem, 6.4vw + 0.4rem, 5.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+@utility text-title {
+  font-size: clamp(1.9rem, 3.4vw + 0.4rem, 3.25rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+@utility text-subtitle {
+  font-size: clamp(1.25rem, 1.2vw + 0.9rem, 1.625rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+@utility text-lead {
+  font-size: clamp(1.0625rem, 0.5vw + 1rem, 1.3125rem);
+  line-height: 1.55;
+  color: var(--ink-muted);
+  text-wrap: pretty;
+}
+
+@utility text-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---------- Hero: complexity -> structure -> clarity ----------
+ * The resolved composition is the default (base) state, so the visual is
+ * complete without animation. The animation only plays the fragmented start.
+ */
+@keyframes glyph-resolve {
+  from {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.glyph-cell {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: glyph-resolve 900ms var(--ease-out) var(--delay, 0ms) backwards;
+}
+
+.glyph-guides {
+  animation: fade-in 700ms ease 650ms backwards;
+}
+
+.rise {
+  animation: rise 600ms var(--ease-out) var(--delay, 0ms) backwards;
+}
+
+/* Scroll reveals (Reveal component) must never hide content without JS */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .glyph-cell,
+  .glyph-guides,
+  .rise {
+    animation: none;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
